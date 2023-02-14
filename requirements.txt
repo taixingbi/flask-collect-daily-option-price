@@ -1,0 +1,8 @@
+flask
+pyopenssl
+robin-stocks
+yfinance
+pandas
+robin_stocks
+pytz
+boto3
