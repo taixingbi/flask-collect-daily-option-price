@@ -95,12 +95,14 @@ class optionPrice:
             'expirationDate': {},
             'optionType': {},
             'premium': {},
+            'date': {},
         }
         newItem['id']['S'] = dic_option["id"]
         newItem['symbol']['S'] = dic_option["symbol"]
         newItem['expirationDate']['S'] = dic_option["expirationDate"]
         newItem['optionType']['S'] = dic_option["optionType"]
         newItem['premium']['S'] = dic_option["premium"]
+        newItem['date']['S'] = dic_option["date"]
         dynamodb.put_item(TableName="option-price", Item=newItem)
 
 if __name__ == '__main__':
