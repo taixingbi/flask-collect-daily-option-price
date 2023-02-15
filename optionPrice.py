@@ -74,6 +74,7 @@ class optionPrice:
                     "expirationDate": expirationDate, 
                     "optionType": optionType, 
                     "premium": str(best_debit), 
+                    "date": self.ESTTime, 
         }
         return dic_option
     
