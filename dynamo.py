@@ -13,7 +13,10 @@ class dynamo:
         if response.get("Item"): 
             print("upate item")
             item = response.get("Item")
+            # if item["price"].split(",")[0] == newitem["price"] and item["price"].split(",")[0] == newitem["price"]
+
             item["premium"] +=  ", " + newitem["premium"]
+            item["premium_adjust"] +=  ", " + newitem["premium_adjust"]
             item["date"] +=  ", " + newitem["date"]
             item["price"] +=  ", " + newitem["price"]
         else:

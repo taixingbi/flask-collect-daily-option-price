@@ -60,17 +60,21 @@ class optionPrice:
         print(self.symbol, expirationDate, optionType, best_debit, "(",best_bid,best_ask,")")
 
         option = self.symbol.upper() + expirationDate.replace("-", "") + optionType[:1].upper() + str(self.strike) # SPY20230215C411
+
+        premium_adjust = round(best_debit -  (self.price - int( float(self.price))) if optionType == "call" else best_debit +  (self.price - int( float(self.price))),2)
         dic_option = {"id": option,
                     "symbol": self.symbol,  
                     "expirationDate": expirationDate, 
                     "optionType": optionType, 
                     "premium": str(best_debit), 
+                    "premium_adjust": str(premium_adjust) ,
                     "date": self.ESTTime, 
                     "price": str(self.price), 
                     "note": ""
         }
+        print(dic_option)
         return dic_option
-    
+
     def get(self, key = "record"):
         call = self.getBestDebit("call", 1)
         put = self.getBestDebit("put", 1)
@@ -81,4 +85,4 @@ class optionPrice:
         return list
         
 if __name__ == '__main__':
-    optionPrice().get("record")
+    optionPrice().get("recor")
