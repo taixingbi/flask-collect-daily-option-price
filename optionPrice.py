@@ -4,12 +4,13 @@ import robin_stocks.robinhood as rs
 import yfinance as yf
 import pytz
 import boto3
+import os
+
 
 dynamodb  =  boto3.client(
     service_name = 'dynamodb',
     region_name = 'us-east-1',
-    aws_access_key_id = 'AKIAXK4PJGUM3GB54YID',
-    aws_secret_access_key = '')
+)
 
 class optionPrice:
     def __init__(self, symbol = "spy"):
@@ -75,6 +76,7 @@ class optionPrice:
                     "optionType": optionType, 
                     "premium": str(best_debit), 
                     "date": self.ESTTime, 
+                    "price": str(self.price), 
         }
         return dic_option
     
@@ -96,6 +98,7 @@ class optionPrice:
             'optionType': {},
             'premium': {},
             'date': {},
+            'price': {},
         }
         newItem['id']['S'] = dic_option["id"]
         newItem['symbol']['S'] = dic_option["symbol"]
@@ -103,6 +106,7 @@ class optionPrice:
         newItem['optionType']['S'] = dic_option["optionType"]
         newItem['premium']['S'] = dic_option["premium"]
         newItem['date']['S'] = dic_option["date"]
+        newItem['price']['S'] = dic_option["price"]
         dynamodb.put_item(TableName="option-price", Item=newItem)
 
 if __name__ == '__main__':
