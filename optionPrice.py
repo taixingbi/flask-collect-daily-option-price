@@ -67,6 +67,7 @@ class optionPrice:
                     "premium": str(best_debit), 
                     "date": self.ESTTime, 
                     "price": str(self.price), 
+                    "note": ""
         }
         return dic_option
     
