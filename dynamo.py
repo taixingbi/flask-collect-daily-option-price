@@ -4,7 +4,7 @@ import boto3
 class dynamo:
     def __init__(self):
         print("dynamo")
-        self.table = boto3.resource('dynamodb').Table('option-price')
+        self.table = boto3.resource('dynamodb', region_name='us-east-1').Table('option-price')
 
     def record(self, newitem):
         print("--------------record------------------")
@@ -30,6 +30,6 @@ if __name__ == '__main__':
                 'premium': '2',
                 'symbol': 'spy',
                 'price': '411.78',
-                'id': 'SPY20230216P41'
+                'id': 'SPY20230216P41999'
                 }
     dynamo().record(newItem)
