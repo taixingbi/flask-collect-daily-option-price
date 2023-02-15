@@ -3,7 +3,6 @@ from flask import Flask
 from flask import make_response, jsonify
 
 from optionPrice import *
-from dynamo import dynamo
 
 def jsonify(status=200, indent=4, sort_keys=True, **kwargs):
     response = make_response(json.dumps(dict(**kwargs), indent=indent, sort_keys=sort_keys))

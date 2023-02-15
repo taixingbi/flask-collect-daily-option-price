@@ -13,8 +13,8 @@ http://ec2-3-236-184-40.compute-1.amazonaws.com/
 ### ubuntu
 '''
 screen -ls
-screen -S app
 pkill screen
+screen -S app
 '''
 
 ### mac kill 5000
