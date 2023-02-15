@@ -3,14 +3,7 @@ from datetime import datetime
 import robin_stocks.robinhood as rs
 import yfinance as yf
 import pytz
-import boto3
-import os
-
-
-dynamodb  =  boto3.client(
-    service_name = 'dynamodb',
-    region_name = 'us-east-1',
-)
+from dynamo import dynamo
 
 class optionPrice:
     def __init__(self, symbol = "spy"):
@@ -67,10 +60,7 @@ class optionPrice:
         print(self.symbol, expirationDate, optionType, best_debit, "(",best_bid,best_ask,")")
 
         option = self.symbol.upper() + expirationDate.replace("-", "") + optionType[:1].upper() + str(self.strike) # SPY20230215C411
-        dic_option = {"date": self.ESTTime, "option" : option, "premium": best_debit, "price" : str(self.price)} # 2023-02-15 08:57:23 0 SPY20230215C411 2.58 411.34
-        print(dic_option)
-
-        dic_option = {"id": self.ESTTime + " " + str(day) + " " + option + " " + str(best_debit) + " " + str(self.price),
+        dic_option = {"id": option,
                     "symbol": self.symbol,  
                     "expirationDate": expirationDate, 
                     "optionType": optionType, 
@@ -85,29 +75,9 @@ class optionPrice:
         put = self.getBestDebit("put", 1)
         list= [call, put]
         if key == "record":
-            for l in list:
-                self.record(l)
+            for item in list:
+                dynamo().record(item)
         return list
         
-    def record(self, dic_option):
-        print("--------------record------------------")
-
-        newItem = { 'id': {}, 
-            'symbol': {},
-            'expirationDate': {},
-            'optionType': {},
-            'premium': {},
-            'date': {},
-            'price': {},
-        }
-        newItem['id']['S'] = dic_option["id"]
-        newItem['symbol']['S'] = dic_option["symbol"]
-        newItem['expirationDate']['S'] = dic_option["expirationDate"]
-        newItem['optionType']['S'] = dic_option["optionType"]
-        newItem['premium']['S'] = dic_option["premium"]
-        newItem['date']['S'] = dic_option["date"]
-        newItem['price']['S'] = dic_option["price"]
-        dynamodb.put_item(TableName="option-price", Item=newItem)
-
 if __name__ == '__main__':
-    optionPrice().record()
+    optionPrice().get("record")
