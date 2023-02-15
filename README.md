@@ -7,7 +7,7 @@ source myvenv/bin/activate
 pip install --upgrade pip
 pip install -r requirements.txt
 
-http://ec2-3-238-9-162.compute-1.amazonaws.com
+http://ec2-3-236-184-40.compute-1.amazonaws.com/
 '''
 
 ### ubuntu
