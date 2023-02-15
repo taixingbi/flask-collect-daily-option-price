@@ -13,7 +13,9 @@ class dynamo:
         if response.get("Item"): 
             print("upate item")
             item = response.get("Item")
-            # if item["price"].split(",")[0] == newitem["price"] and item["price"].split(",")[0] == newitem["price"]
+            if item["premium"].split(",")[0] == newitem["premium"]: 
+                print("The stock market is not open yet")
+                return
 
             item["premium"] +=  ", " + newitem["premium"]
             item["premium_adjust"] +=  ", " + newitem["premium_adjust"]
