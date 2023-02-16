@@ -14,7 +14,6 @@ def jsonify(status=200, indent=4, sort_keys=True, **kwargs):
 app = Flask(__name__)
 @app.route('/<symbol>/<key>')
 def index(symbol, key):
-
     dic = optionPrice(symbol).get(key)
     return jsonify(indent=2, sort_keys=False, flask_response=dic)
 

@@ -1,24 +1,44 @@
 
 import boto3
+from boto3.dynamodb.conditions import Key, Attr
 
 class dynamo:
     def __init__(self):
         print("dynamo")
         self.table = boto3.resource('dynamodb', region_name='us-east-1').Table('option-price')
 
-    def record(self, newitem):
-        print("--------------record------------------")
-        response = self.table.get_item(Key={'id': newitem.get('id')})
+    def query(self, date):
+        print("--------------query------------------")
+        response = self.table.scan(FilterExpression=Attr('active').eq('True'))
+        items = response['Items']
+        itemsActive = []
+        for item in items:
+            print(date)
+            if date > item['expirationDate']:
+                print(item['expirationDate'], "is expired")
+                item['active'] = "False"
+                self.put(item)
+                return None
+            else:
+                print(item['expirationDate'],  "not expired")
+                itemsActive.append(item)
+        return itemsActive
 
+    def put(self, newitem):
+        print("--------------put------------------")
+        self.table.put_item(Item= newitem)
+
+    def update(self, newitem):
+        print("--------------update------------------")
+        print(newitem)
+        response = self.table.get_item(Key={
+            'id': newitem.get('id'), 
+            })
+        print(response)
         if response.get("Item"): 
-            print("upate item")
+            print("update item")
             item = response.get("Item")
-            if item["premium"].split(",")[0] == newitem["premium"]: 
-                print("The stock market is not open yet")
-                return
-
             item["premium"] +=  ", " + newitem["premium"]
-            item["premium_adjust"] +=  ", " + newitem["premium_adjust"]
             item["date"] +=  ", " + newitem["date"]
             item["price"] +=  ", " + newitem["price"]
         else:
@@ -28,13 +48,14 @@ class dynamo:
         self.table.put_item(Item= item)
 
 if __name__ == '__main__':
-    newItem = { 'expirationDate': '2023-02-16',
-                'date': '2023-02-15 11:28:05',
-                'note': '',
-                'optionType': 'put',
-                'premium': '2',
-                'symbol': 'spy',
-                'price': '411.78',
-                'id': 'SPY20230216P41999'
-                }
-    dynamo().record(newItem)
+    # newItem = { 'expirationDate': '2023-02-16',
+    #             'date': '2023-02-15 11:28:05',
+    #             'note': '',
+    #             'optionType': 'put',
+    #             'premium': '2',
+    #             'symbol': 'spy',
+    #             'strike': '413',
+    #             'id': 'SPY20230216C413'
+    #             }
+    # dynamo().record(newItem)
+    dynamo().query()
