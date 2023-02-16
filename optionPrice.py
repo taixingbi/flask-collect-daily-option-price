@@ -5,10 +5,12 @@ import yfinance as yf
 import pytz
 from dynamo import dynamo
 
+KEY = "record"
 class optionPrice:
-    def __init__(self, symbol = "spy"):
+    def __init__(self, symbol = "spy", key = KEY):
         self.login()
         self.symbol = symbol
+        self.key = key
         self.exps = self.getExpirationDate()
         self.ESTTime = self.ESTTime()
         self.price = self.getCurrentPrice()
@@ -78,30 +80,38 @@ class optionPrice:
         print(dic_option)
         return dic_option
 
-    def get(self, key = "record"):
-        print("get")
+    def startNewOption(self):
+        print("----------------------------startNewOption------------------------------------")
         records =[]
-        if self.optionStart():
-        # if True:
-            print("open an new option ....")
-            call = self.getOptionPremium("call", str(int(self.price)), self.exps[1])
-            put = self.getOptionPremium("put", str(int(self.price)), self.exps[1])
-            records.append(call)
-            records.append(put)
-
-            if key == "record":
-                for item in records: dynamo().put(item)
-        else:
-            itemsActive = dynamo().query(self.ESTTime.split(" ")[0])
-            print("itemsActive", itemsActive)
-            for item in itemsActive:
-                optionPremium = self.getOptionPremium(item["optionType"], item["strike"], item["expirationDate"],)
-                print("optionPremium", optionPremium)
-                records.append(optionPremium)
-            
-            if key == "record":
-                for item in records: dynamo().update(item)
+        call = self.getOptionPremium("call", str(int(self.price)), self.exps[1])
+        put = self.getOptionPremium("put", str(int(self.price)), self.exps[1])
+        records.append(call)
+        records.append(put)
+        if self.key == KEY and self.optionStart():
+        # if self.key == KEY:
+            dynamo().put(call)
+            dynamo().put(put)
         return records
+
+    def updateOption(self):
+        print("----------------------------updateOption------------------------------------")
+        records =[]
+        itemsActive = dynamo().query(self.ESTTime.split(" ")[0])
+        print("itemsActive", itemsActive)
+        for item in itemsActive:
+            optionPremium = self.getOptionPremium(item["optionType"], item["strike"], item["expirationDate"],)
+            print("optionPremium", optionPremium)
+            records.append(optionPremium)
+        
+        if self.key == KEY:
+            for item in records: dynamo().update(item)
+
+        return records
+
+    def record(self):
+        a = self.updateOption()
+        b = self.startNewOption()
+        return b + a
         
 if __name__ == '__main__':
-    optionPrice().get("record")
+    optionPrice("record").get()
